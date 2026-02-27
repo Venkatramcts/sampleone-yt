@@ -4,48 +4,299 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Media Downloader Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
-        .tab-buttons button { padding: 10px 20px; cursor: pointer; border: none; background: #eee; margin-right: 5px; font-weight: bold;}
-        .tab-buttons button.active { background: #007bff; color: white; }
-        .tab-content { display: none; padding: 20px; border: 1px solid #ccc; margin-top: 10px; border-radius: 5px; }
+        /* --- Base Styles --- */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --success-hover: #059669;
+            --info: #0ea5e9;
+            --info-hover: #0284c7;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            max-width: 900px; 
+            margin: 40px auto; 
+            padding: 0 20px; 
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            letter-spacing: -0.05rem;
+        }
+
+        /* --- Card Container --- */
+        .app-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        /* --- Tabs --- */
+        .tab-buttons {
+            display: flex;
+            background: #f9fafb;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-buttons button { 
+            flex: 1;
+            padding: 16px 20px; 
+            cursor: pointer; 
+            border: none; 
+            background: transparent; 
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-buttons button:hover {
+            color: var(--primary);
+            background: #f3f4f6;
+        }
+
+        .tab-buttons button.active { 
+            color: var(--primary); 
+            border-bottom-color: var(--primary);
+            background: var(--card-bg);
+        }
+
+        /* --- Tab Content --- */
+        .tab-content { 
+            display: none; 
+            padding: 30px; 
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
         .tab-content.active { display: block; }
-        input[type="text"] { width: 70%; padding: 10px; margin-right: 10px; }
-        button.action-btn { padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; }
-        ul { list-style: none; padding: 0; }
-        li { padding: 8px 0; border-bottom: 1px solid #eee; }
-        #loading { display: none; color: #007bff; font-weight: bold; margin-top: 10px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+            color: var(--text-main);
+        }
+
+        /* --- Inputs & Selects --- */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] { 
+            flex: 1;
+            padding: 12px 16px; 
+            border: 1px solid var(--border); 
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+
+        select { 
+            padding: 12px 16px; 
+            border-radius: 8px; 
+            border: 1px solid var(--border);
+            background-color: white;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        /* --- Buttons --- */
+        button {
+            font-family: 'Inter', sans-serif;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.fetch-btn { 
+            padding: 12px 24px; 
+            background: var(--info); 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+        }
+
+        button.fetch-btn:hover { background: var(--info-hover); }
+
+        button.action-btn { 
+            padding: 12px 24px; 
+            background: var(--success); 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+        }
+
+        button.action-btn:hover { background: var(--success-hover); }
+
+        /* --- Dynamic Sections & Lists --- */
+        .quality-section { 
+            margin-top: 20px; 
+            display: none; 
+            padding: 20px; 
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .controls-row { 
+            margin-top: 20px; 
+            padding: 15px 20px; 
+            background: #f8fafc; 
+            border-radius: 8px; 
+            border: 1px solid var(--border);
+            display: none; 
+            align-items: center; 
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        ul { 
+            list-style: none; 
+            padding: 0; 
+            max-height: 400px; 
+            overflow-y: auto; 
+            border: 1px solid var(--border); 
+            margin-top: 20px; 
+            border-radius: 8px;
+            background: white;
+        }
+
+        li { 
+            padding: 12px 16px; 
+            border-bottom: 1px solid var(--border); 
+            transition: background-color 0.2s;
+        }
+
+        li:last-child { border-bottom: none; }
+        li:hover { background-color: #f3f4f6; }
+
+        label { cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 500;}
+        
+        input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        #loading, #audioLoading, #videoLoading { 
+            color: var(--primary); 
+            font-weight: 600; 
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
 
     <h1>Media Downloader Pro</h1>
     
-    <div class="tab-buttons">
-        <button class="active" onclick="showTab('audioTab', this)">Audio</button>
-        <button onclick="showTab('videoTab', this)">Video</button>
-        <button onclick="showTab('channelTab', this)">Channel Batch</button>
-    </div>
+    <div class="app-container">
+        <div class="tab-buttons">
+            <button class="active" onclick="showTab('audioTab', this)">Audio</button>
+            <button onclick="showTab('videoTab', this)">Video</button>
+            <button onclick="showTab('channelTab', this)">Channel Batch</button>
+        </div>
 
-    <div id="audioTab" class="tab-content active">
-        <h3>Download Audio (MP3)</h3>
-        <input type="text" id="audioUrl" placeholder="Enter Video URL (e.g., YouTube)">
-        <button class="action-btn" onclick="downloadSingle('audio')">Download</button>
-    </div>
+        <div id="audioTab" class="tab-content active">
+            <h3>Download Audio (MP3)</h3>
+            <div class="input-group">
+                <input type="text" id="audioUrl" placeholder="Paste YouTube Video URL here...">
+                <button class="fetch-btn" onclick="fetchOptions('audio')">Get Qualities</button>
+            </div>
+            <div id="audioLoading" style="display:none;">⏳ Analyzing video audio streams...</div>
+            
+            <div id="audioQualitySection" class="quality-section" style="display:none;">
+                <label><strong>Select Quality:</strong> </label>
+                <select id="audioQualitySelect"></select>
+                <button class="action-btn" onclick="executeDownload('audio')">Download Now</button>
+            </div>
+        </div>
 
-    <div id="videoTab" class="tab-content">
-        <h3>Download Video (MP4)</h3>
-        <input type="text" id="videoUrl" placeholder="Enter Video URL">
-        <button class="action-btn" onclick="downloadSingle('video')">Download</button>
-    </div>
+        <div id="videoTab" class="tab-content">
+            <h3>Download Video (MP4)</h3>
+            <div class="input-group">
+                <input type="text" id="videoUrl" placeholder="Paste YouTube Video URL here...">
+                <button class="fetch-btn" onclick="fetchOptions('video')">Get Qualities</button>
+            </div>
+            <div id="videoLoading" style="display:none;">⏳ Analyzing video formats...</div>
 
-    <div id="channelTab" class="tab-content">
-        <h3>Batch Download from Channel/Playlist</h3>
-        <input type="text" id="channelUrl" placeholder="Enter Channel or Playlist URL">
-        <button class="action-btn" onclick="fetchChannel()">Fetch Videos</button>
-        <div id="loading">Processing... Please wait.</div>
-        <ul id="videoList"></ul>
-        <button id="batchDownloadBtn" class="action-btn" style="display:none; margin-top:20px;" onclick="downloadBatch()">Download Selected (ZIP)</button>
+            <div id="videoQualitySection" class="quality-section" style="display:none;">
+                <label><strong>Select Top Quality:</strong> </label>
+                <select id="videoQualitySelect"></select>
+                <button class="action-btn" onclick="executeDownload('video')">Download Now</button>
+            </div>
+        </div>
+
+        <div id="channelTab" class="tab-content">
+            <h3>Batch Download from Channel or Playlist</h3>
+            <div class="input-group">
+                <input type="text" id="channelUrl" placeholder="Paste Channel or Playlist URL here...">
+                <button class="fetch-btn" onclick="fetchChannel()">Fetch List</button>
+            </div>
+            <div id="loading" style="display:none;">⏳ Fetching video list... this might take a few seconds.</div>
+            
+            <div id="batchControls" class="controls-row">
+                <label><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"> Select All</label>
+                
+                <select id="batchTypeSelect" onchange="updateBatchQualityDropdown()">
+                    <option value="video">Format: Video (MP4)</option>
+                    <option value="audio">Format: Audio (MP3)</option>
+                </select>
+
+                <select id="batchQualitySelect">
+                    </select>
+
+                <button id="batchDownloadBtn" class="action-btn" onclick="downloadBatch()" style="margin-left: auto;">Download Selected (ZIP)</button>
+            </div>
+
+            <ul id="videoList"></ul>
+        </div>
     </div>
 
     <script>
@@ -58,33 +309,61 @@
             btnElement.classList.add('active');
         }
 
-        // Handles Tabs 1 & 2 (Direct browser download)
-        function downloadSingle(type) {
+        // --- SINGLE VIDEO/AUDIO LOGIC ---
+        async function fetchOptions(type) {
             const url = document.getElementById(`${type}Url`).value;
             if(!url) return alert("Please enter a URL");
-            // Direct the browser to the file download endpoint
-            window.location.href = `${API_BASE}/download/${type}?url=${encodeURIComponent(url)}`;
+            
+            document.getElementById(`${type}Loading`).style.display = "flex";
+            document.getElementById(`${type}QualitySection`).style.display = "none";
+
+            try {
+                const res = await fetch(`${API_BASE}/info?url=${encodeURIComponent(url)}`);
+                const data = await res.json();
+                
+                if(data.status === "success") {
+                    const select = document.getElementById(`${type}QualitySelect`);
+                    select.innerHTML = "";
+                    
+                    const options = type === 'video' ? data.video_options : data.audio_options;
+                    options.forEach(opt => {
+                        select.innerHTML += `<option value="${opt.value}">${opt.label}</option>`;
+                    });
+                    
+                    document.getElementById(`${type}QualitySection`).style.display = "flex";
+                } else {
+                    alert("Error fetching info: " + data.message);
+                }
+            } catch(e) {
+                alert("Network error. Backend running?");
+            }
+            document.getElementById(`${type}Loading`).style.display = "none";
         }
 
-        // Tab 3: Fetch metadata
+        function executeDownload(type) {
+            const url = document.getElementById(`${type}Url`).value;
+            const quality = document.getElementById(`${type}QualitySelect`).value;
+            window.location.href = `${API_BASE}/download/${type}?url=${encodeURIComponent(url)}&quality=${quality}`;
+        }
+
+        // --- BATCH LOGIC ---
         async function fetchChannel() {
             const url = document.getElementById('channelUrl').value;
             if(!url) return;
             
             const list = document.getElementById('videoList');
             const loading = document.getElementById('loading');
-            const btn = document.getElementById('batchDownloadBtn');
+            const controls = document.getElementById('batchControls');
             
             list.innerHTML = "";
-            btn.style.display = "none";
-            loading.style.display = "block";
-            loading.innerText = "Fetching video list...";
+            controls.style.display = "none";
+            loading.style.display = "flex";
 
             try {
                 const res = await fetch(`${API_BASE}/channel-info?url=${encodeURIComponent(url)}`);
                 const data = await res.json();
                 
-                if(data.status === "success") {
+                if(data.status === "success" && data.videos.length > 0) {
                     data.videos.forEach(vid => {
                         list.innerHTML += `
                             <li>
@@ -94,33 +373,64 @@
                                 </label>
                             </li>`;
                     });
-                    btn.style.display = "block";
+                    
+                    document.getElementById('selectAllCheckbox').checked = false;
+                    updateBatchQualityDropdown(); 
+                    controls.style.display = "flex";
                 } else {
-                    list.innerHTML = `<li style="color:red;">Error: ${data.message}</li>`;
+                    list.innerHTML = `<li style="color:var(--info); padding: 20px; text-align:center;">No videos found. Ensure this channel has public videos.</li>`;
                 }
             } catch (err) {
-                list.innerHTML = `<li style="color:red;">Network Error. Is backend running?</li>`;
+                list.innerHTML = `<li style="color:red; padding: 20px; text-align:center;">Network Error. Is backend running?</li>`;
             }
             loading.style.display = "none";
         }
 
-        // Tab 3: Process Batch
+        function toggleSelectAll(source) {
+            const checkboxes = document.querySelectorAll('.batch-check');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+        }
+
+        function updateBatchQualityDropdown() {
+            const type = document.getElementById('batchTypeSelect').value;
+            const qualitySelect = document.getElementById('batchQualitySelect');
+            qualitySelect.innerHTML = "";
+            
+            if (type === 'video') {
+                qualitySelect.innerHTML = `
+                    <option value="2160">Max: 2160p (4K)</option>
+                    <option value="1440">Max: 1440p (2K)</option>
+                    <option value="1080" selected>Max: 1080p (Best Balance)</option>
+                    <option value="720">Max: 720p</option>
+                    <option value="480">Max: 480p</option>
+                `;
+            } else {
+                qualitySelect.innerHTML = `
+                    <option value="320">Max: 320 kbps</option>
+                    <option value="192" selected>Max: 192 kbps</option>
+                    <option value="128">Max: 128 kbps</option>
+                `;
+            }
+        }
+
         async function downloadBatch() {
             const checkboxes = document.querySelectorAll('.batch-check:checked');
             const urls = Array.from(checkboxes).map(cb => cb.value);
             
             if(urls.length === 0) return alert("Select at least one video!");
 
+            const type = document.getElementById('batchTypeSelect').value;
+            const quality = document.getElementById('batchQualitySelect').value;
+
             const loading = document.getElementById('loading');
-            loading.style.display = "block";
-            loading.innerText = "Downloading and zipping files on server... This may take a while!";
+            loading.style.display = "flex";
+            loading.innerText = `⏳ Downloading and zipping ${urls.length} files as ${type}... This may take a while!`;
 
             try {
-                // Because we are sending JSON data, we use POST, and handle the response as a Blob
                 const res = await fetch(`${API_BASE}/download/batch`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ urls: urls })
+                    body: JSON.stringify({ urls: urls, type: type, quality: quality })
                 });
 
                 if(!res.ok) throw new Error("Server failed to process batch");
@@ -137,6 +447,7 @@
                 alert(err.message);
             }
             loading.style.display = "none";
+            loading.innerText = "⏳ Fetching video list... this might take a few seconds."; // reset text
         }
     </script>
 </body>
